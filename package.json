@@ -1,0 +1,22 @@
+{
+  "name": "reac-optmization",
+  "version": "1.0.0",
+  "description": "Manually control the render of react components",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react"
+  ],
+  "author": "myq",
+  "license": "ISC",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.19",
+    "@types/react-dom": "^17.0.9",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}
