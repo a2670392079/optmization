@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
 import Manual from '../../../src/Manual'
@@ -6,10 +6,28 @@ import Count from './components/Count'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [data, setData] = useState(0);
+  
+  useEffect(() => {
+    setCount(1)
+    setTimeout(() => {
+      console.log(data);
+      debugger
+      setData((d) => {
+        console.log(d);
+        return 3
+      } )
+    }, 4000)
+    return () => {
+    };
+  }, []);
 
+  useEffect(() => {
+    setData(1);
+  },[])
   return (
     <div className="App">
-      <header className="App-header">
+      {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>Hello Vite + React!</p>
         <p>
@@ -39,12 +57,14 @@ function App() {
             Vite Docs
           </a>
         </p>
-      </header>
+      </header> */}
       <div>
         <Manual deps={[count]}>
           <Count />
         </Manual>
       </div>
+      <p>data:{data}</p>
+      
     </div>
   )
 }
