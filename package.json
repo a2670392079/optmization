@@ -1,15 +1,16 @@
 {
-  "name": "reac-optmization",
-  "version": "1.0.0",
-  "description": "Manually control the render of react components",
+  "name": "@a2670392079/react-toolkit",
+  "version": "0.1.1",
+  "description": "some instrumental hooks and component for react",
   "main": "index.ts",
+  "repository": "https://github.com/a2670392079/react-utils",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "react"
   ],
-  "author": "myq",
+  "author": "xiaomao",
   "license": "ISC",
   "dependencies": {
   },
