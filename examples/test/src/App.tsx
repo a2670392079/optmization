@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
-import Manual from '../../../src/Manual'
+import Manual from '../../../src/components/Manual'
 import Count from './components/Count'
 
 function App() {
