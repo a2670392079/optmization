@@ -3,7 +3,7 @@
  * @AUTH: myq
  * @DATE: 2021-09-06
  */
-import React, {useCallback, useLayoutEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef} from "react";
 import {Obj} from "./type";
 
 
@@ -73,6 +73,11 @@ const parseParams = (uri: string, params?: Obj): string => {
     return url;
 };
 
+/**
+ * jsonp请求
+ * @param {React.RefObject<HTMLIFrameElement>} ref iframe ref
+ * @param {number} timeOut 请求延时
+ */
 export default function (ref: React.RefObject<HTMLIFrameElement>, timeOut: number = 3000) {
     const temp = useRef<{
         tick: number;
@@ -105,7 +110,7 @@ export default function (ref: React.RefObject<HTMLIFrameElement>, timeOut: numbe
             })
         }
     }, [!!ref.current])
-    useLayoutEffect(() => {
+    useEffect(() => {
         const iframeWindow = ref.current.contentWindow;
         if (!iframeWindow) {
             return;

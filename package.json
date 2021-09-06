@@ -1,6 +1,6 @@
 {
   "name": "@a2670392079/react-toolkit",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "some instrumental hooks and component for react",
   "main": "index.ts",
   "repository": "https://github.com/a2670392079/react-utils",
@@ -8,10 +8,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "react"
+    "react",
+    "jsonp"
   ],
   "author": "xiaomao",
-  "license": "ISC",
+  "license": "BSD",
   "dependencies": {
   },
   "devDependencies": {
