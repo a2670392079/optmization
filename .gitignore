@@ -1,3 +1,7 @@
 /node_modules
 /yarn.lock
 /examples/test/node_modules
+/.idea/.gitignore
+/.idea/modules.xml
+/.idea/react-utils.iml
+/.idea/vcs.xml

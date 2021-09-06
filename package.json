@@ -1,6 +1,6 @@
 {
   "name": "@a2670392079/react-toolkit",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "some instrumental hooks and component for react",
   "main": "index.ts",
   "repository": "https://github.com/a2670392079/react-utils",
