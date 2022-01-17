@@ -3,9 +3,8 @@
  * @AUTH: myq
  * @DATE: 2021-09-06
  */
-import React, {useCallback, useEffect, useRef} from "react";
-import {Obj} from "./type";
-
+import React, { useCallback, useRef, useMemo } from "react";
+import { Obj } from "./type";
 
 const srcDoc = `<script>
       function windowMessageHandler(event) {
@@ -56,70 +55,80 @@ const srcDoc = `<script>
         port.start();
       }
       window.addEventListener('message', windowMessageHandler);
-    </script>`
+    </script>`;
 
 const parseParams = (uri: string, params?: Obj): string => {
-    if (!params || typeof params !== 'object') {
-        return uri;
-    }
-    let url = uri;
-    const paramsArray: Array<string> = [];
-    Object.keys(params).forEach((key) => params[key] && paramsArray.push(`${key}=${params[key]}`));
-    if (url.search(/\?/) === -1) {
-        url += `?${paramsArray.join('&')}`;
-    } else {
-        url += `&${paramsArray.join('&')}`;
-    }
-    return url;
+  if (!params || typeof params !== "object") {
+    return uri;
+  }
+  let url = uri;
+  const paramsArray: Array<string> = [];
+  Object.keys(params).forEach(
+    (key) => params[key] && paramsArray.push(`${key}=${params[key]}`)
+  );
+  if (url.search(/\?/) === -1) {
+    url += `?${paramsArray.join("&")}`;
+  } else {
+    url += `&${paramsArray.join("&")}`;
+  }
+  return url;
 };
 
-/**
- * jsonp请求
- * @param {React.RefObject<HTMLIFrameElement>} ref iframe ref
- * @param {number} timeOut 请求延时
- */
-export default function (ref: React.RefObject<HTMLIFrameElement>, timeOut: number = 3000) {
-    const temp = useRef<{
-        tick: number;
-        channel: MessageChannel;
-    }>({tick: 0, channel: null})
-    const request = useCallback((url: string, params?: Obj) => {
-        if (temp.current.channel) {
-            return new Promise((resolve, reject) => {
-                const port = temp.current.channel.port1;
-                const callbackName = 'request_script_callbacks.' + temp.current.tick
-                port.postMessage({
-                    url: parseParams(url, params),
-                    callbackName: 'request_script_callbacks.' + callbackName
-                });
-                const listener = (e: MessageEvent) => {
-                    if (e.data?.callbackName === callbackName) {
-                        if (e.data.error) {
-                            reject(e.data.error)
-                        } else {
-                            resolve(e.data.value)
-                        }
-                        port.removeEventListener('message', listener);
-                    }
-                }
-                port.addEventListener('message', listener);
-                setTimeout(() => {
-                    port.removeEventListener('message', listener);
-                    reject('请求超时')
-                }, timeOut)
-            })
-        }
-    }, [!!ref.current])
-    useEffect(() => {
-        const iframeWindow = ref.current.contentWindow;
-        if (!iframeWindow) {
-            return;
-        }
-        ref.current.srcdoc = srcDoc;
-        const channel = new MessageChannel();
-        temp.current.channel = channel
-        iframeWindow.postMessage('callback_init', '*', [channel.port2]);
-    }, []);
+const once = (fn: (...arg: any) => any) => {
+  let res: any;
+  return function () {
+    if (fn) {
+      res = fn();
+      fn = null;
+    }
+    return res;
+  };
+};
 
-    return [request]
+const createRequestIframe = once(() => {
+  const container = document.createElement("iframe");
+  container.srcdoc = srcDoc;
+  container.style.display = "none";
+  const channel = new MessageChannel();
+  document.body.appendChild(container);
+  container.contentWindow.postMessage("callback_init", "*", [channel.port2]);
+  return {
+    iframeWindow: container.contentWindow,
+    channel,
+  };
+});
+
+export default function (timeOut: number = 3000) {
+  const { iframeWindow, channel } = useMemo(() => createRequestIframe(), []);
+
+  const request = useCallback((url: string, params?: Obj) => {
+    if (channel) {
+      return new Promise((resolve, reject) => {
+        const port = channel.port1;
+        const callbackName =
+          "request_script_callbacks." + Date.now().toString();
+        port.postMessage({
+          url: parseParams(url, params),
+          callbackName: "request_script_callbacks." + callbackName,
+        });
+        const listener = (e: MessageEvent) => {
+          if (e.data?.callbackName === callbackName) {
+            if (e.data.error) {
+              reject(e.data.error);
+            } else {
+              resolve(e.data.value);
+            }
+            port.removeEventListener("message", listener);
+          }
+        };
+        port.addEventListener("message", listener);
+        setTimeout(() => {
+          port.removeEventListener("message", listener);
+          reject("请求超时");
+        }, timeOut);
+      });
+    }
+  }, []);
+
+  return [request];
 }
